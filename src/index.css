@@ -90,7 +90,7 @@
 
 @layer components {
   .gradient-bg {
-    @apply bg-gradient-to-br from-violet-200 via-fuchsia-200 to-cyan-200;
+    @apply bg-gradient-to-br from-violet-100 via-purple-100 to-blue-100;
   }
 
   .gradient-text {
@@ -98,11 +98,15 @@
   }
 
   .card-bg {
-    @apply bg-black/80 backdrop-blur-md rounded-xl shadow-lg border border-purple-500/20;
+    @apply bg-white bg-opacity-70 backdrop-blur-md rounded-xl shadow-lg border border-white border-opacity-20;
   }
 
   .visualizer-container {
-    @apply flex items-center justify-center relative w-full max-w-3xl mx-auto rounded-2xl h-80 overflow-hidden bg-black shadow-xl border border-purple-500/30;
+    @apply flex items-center justify-center relative w-full max-w-2xl mx-auto rounded-2xl h-60 overflow-hidden bg-gradient-to-r from-violet-200/50 to-blue-200/50 backdrop-blur-lg shadow-lg border border-white/20;
+  }
+
+  .visualizer-bar {
+    @apply bg-gradient-to-t from-violet-500 to-blue-400 rounded-full mx-0.5 w-2 transition-all duration-100;
   }
 
   .mic-button {
@@ -119,11 +123,6 @@
   }
 
   .results-container {
-    @apply w-full max-w-5xl mx-auto mt-10 p-8 rounded-2xl bg-black/60 backdrop-blur-md shadow-lg border border-purple-500/20 min-h-[200px] text-white;
-  }
-
-  .particle {
-    @apply absolute rounded-full opacity-80 blur-sm mix-blend-screen;
-    background: radial-gradient(circle at center, currentColor 0%, transparent 70%);
+    @apply w-full max-w-5xl mx-auto mt-10 p-8 rounded-2xl bg-white bg-opacity-70 backdrop-blur-md shadow-lg border border-white/20 min-h-[200px];
   }
 }
