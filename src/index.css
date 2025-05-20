@@ -106,7 +106,7 @@
   }
 
   .visualizer-bar {
-    @apply bg-gradient-to-t from-violet-500 to-blue-400 rounded-full mx-0.5 w-2 transition-all duration-50;
+    @apply bg-gradient-to-t from-violet-500 to-blue-400 rounded-full mx-0.5 w-2 transition-all duration-100;
   }
 
   .mic-button {
