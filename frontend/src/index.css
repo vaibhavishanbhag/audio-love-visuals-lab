@@ -92,17 +92,31 @@
   .gradient-bg {
     @apply bg-gradient-to-br from-violet-100 via-purple-100 to-blue-100;
   }
+  
+  .animated-gradient {
+    @apply bg-black;
+    background-image: linear-gradient(
+      125deg,
+      rgba(76, 0, 255, 0.8) 0%,
+      rgba(76, 0, 255, 0) 33.33%,
+      rgba(76, 0, 255, 0) 66.67%,
+      rgba(76, 0, 255, 0.8) 100%
+    );
+    background-size: 300% 300%;
+    animation: gradient-shift 15s ease infinite;
+  }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-purple-400 via-pink-500 to-blue-400 bg-clip-text text-transparent;
   }
 
   .card-bg {
-    @apply bg-white bg-opacity-70 backdrop-blur-md rounded-xl shadow-lg border border-white border-opacity-20;
+    @apply bg-black bg-opacity-70 backdrop-blur-md rounded-xl shadow-lg border border-purple-500/20;
   }
 
   .visualizer-container {
-    @apply flex items-center justify-center relative w-full max-w-2xl mx-auto rounded-2xl h-60 overflow-hidden bg-gradient-to-r from-violet-200/50 to-blue-200/50 backdrop-blur-lg shadow-lg border border-white/20;
+    @apply flex items-center justify-center relative w-full max-w-2xl mx-auto rounded-2xl h-60 overflow-hidden shadow-lg border border-purple-600/30;
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.3), inset 0 0 10px rgba(147, 51, 234, 0.2);
   }
 
   .visualizer-bar {
@@ -123,6 +137,31 @@
   }
 
   .results-container {
-    @apply w-full max-w-5xl mx-auto mt-10 p-8 rounded-2xl bg-white bg-opacity-70 backdrop-blur-md shadow-lg border border-white/20 min-h-[200px];
+    @apply w-full max-w-5xl mx-auto mt-10 p-8 rounded-2xl bg-black bg-opacity-70 backdrop-blur-md shadow-lg border border-purple-500/30 min-h-[200px] text-gray-200;
+    box-shadow: 0 0 15px rgba(147, 51, 234, 0.2);
+  }
+}
+
+/* Added keyframes for animated background */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
   }
 }

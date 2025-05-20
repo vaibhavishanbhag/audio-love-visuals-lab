@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import AudioVisualizer from '../components/AudioVisualizer';
 import ResultsDisplay from '../components/ResultsDisplay';
+import ParticleVisualizer from '../components/ParticleVisualizer';
 
 const Index = () => {
   const [results, setResults] = useState<string | null>(null);
@@ -16,9 +16,6 @@ const Index = () => {
       console.log(combined);
       setResults(combined);
     };
-    
-
-
 
     // Clean up
     return () => {
@@ -27,7 +24,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen gradient-bg">
+    <div className="min-h-screen animated-gradient">
       <Header />
 
       <main className="container mx-auto px-4 py-8">
@@ -35,20 +32,20 @@ const Index = () => {
           <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
             Audio Visualizer
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-200 max-w-2xl mx-auto">
             Capture and visualize your audio. Click the mic button below to start recording.
             Results will appear in the section below once processing is complete.
           </p>
         </div>
 
-        <AudioVisualizer />
+        <ParticleVisualizer />
 
         <div className="mt-16">
           <ResultsDisplay results={results} />
         </div>
       </main>
 
-      <footer className="mt-16 py-8 text-center text-gray-500 text-sm">
+      <footer className="mt-16 py-8 text-center text-gray-400 text-sm">
         <p>© {new Date().getFullYear()} AudioViz. All rights reserved.</p>
       </footer>
     </div>
@@ -61,6 +58,5 @@ declare global {
     updateAudioResults?: (htmlContent: string, codeSnippet: string) => void;
   }
 }
-
 
 export default Index;
