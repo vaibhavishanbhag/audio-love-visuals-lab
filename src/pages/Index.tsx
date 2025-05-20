@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import AudioVisualizer from '../components/AudioVisualizer';
+import ParticleVisualizer from '../components/ParticleVisualizer';
 import ResultsDisplay from '../components/ResultsDisplay';
 
 const Index = () => {
@@ -36,7 +36,7 @@ const Index = () => {
           </p>
         </div>
         
-        <AudioVisualizer />
+        <ParticleVisualizer />
         
         <div className="mt-16">
           <ResultsDisplay results={results} />
