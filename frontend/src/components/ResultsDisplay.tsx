@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 
 interface ResultsDisplayProps {
@@ -40,8 +39,8 @@ const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
       {/* Show Code */}
       {codeSnippet && (
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2 text-purple-300">🧠 Code Generated:</h3>
-          <pre className="bg-gray-900 p-4 rounded-md text-sm text-blue-300 overflow-auto border border-purple-500/20">
+          <h3 className="text-lg font-semibold mb-2">🧠 Code Generated:</h3>
+          <pre className="bg-gray-100 p-4 rounded-md text-sm text-blue-800 overflow-auto">
             <code>{codeSnippet}</code>
           </pre>
         </div>
@@ -51,9 +50,9 @@ const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
       <div
         id="results-content"
         ref={containerRef}
-        className="text-gray-300 border-t border-purple-500/30 pt-4 min-h-[150px]"
+        className="text-gray-700 border-t pt-4 min-h-[150px]"
       >
-        <h3 className="text-lg font-semibold mb-2 text-purple-300">✨ Applied Changes:</h3>
+        <h3 className="text-lg font-semibold mb-2">✨ Applied Changes:</h3>
         {htmlContent ? (
           <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
         ) : (
