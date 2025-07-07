@@ -3,7 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Mic, MicOff } from 'lucide-react';
 
 interface ParticleSystemVisualizerProps {
-  onResultsUpdate: (data: { htmlContent: string; codeSnippet: string }) => void;
+  onResultsUpdate: (data: {     appliedHtml: string;
+    codeSnippet: string;
+    fullHtml: string; }) => void;
 }
 
 type Particle = {
@@ -72,10 +74,7 @@ const ParticleSystemVisualizer = ({ onResultsUpdate }: ParticleSystemVisualizerP
           });
 
           const agentData = await agentRes.json();
-          onResultsUpdate({
-            htmlContent: agentData.htmlContent,
-            codeSnippet: agentData.code,
-          });
+          onResultsUpdate(agentData);
         } catch (err) {
           console.error('API error:', err);
         }

@@ -3,7 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Mic, MicOff } from 'lucide-react';
 
 interface BarVisualizerProps {
-  onResultsUpdate: (data: { htmlContent: string; codeSnippet: string }) => void;
+  onResultsUpdate: (data: {     appliedHtml: string;
+    codeSnippet: string;
+    fullHtml: string; }) => void;
 }
 
 const BarVisualizer = ({ onResultsUpdate }: BarVisualizerProps) => {
@@ -58,10 +60,7 @@ const BarVisualizer = ({ onResultsUpdate }: BarVisualizerProps) => {
           });
 
           const agentData = await agentRes.json();
-          onResultsUpdate({
-            htmlContent: agentData.htmlContent,
-            codeSnippet: agentData.code,
-          });
+          onResultsUpdate(agentData);
         } catch (err) {
           console.error('API error:', err);
         }

@@ -7,7 +7,12 @@ import WaveformVisualizer from './visualizers/WaveformVisualizer';
 import BarVisualizer from './visualizers/BarVisualizer';
 
 interface AudioVisualizerProps {
-  onResultsUpdate: (data: { htmlContent: string; codeSnippet: string }) => void;
+  onResultsUpdate: (data: {
+    appliedHtml: string;
+    codeSnippet: string;
+    fullHtml: string;
+  }
+  ) => void;
 }
 
 const AudioVisualizer = ({ onResultsUpdate }: AudioVisualizerProps) => {

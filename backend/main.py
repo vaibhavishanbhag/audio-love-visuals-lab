@@ -1,4 +1,3 @@
-# backend/main.py
 
 from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.responses import JSONResponse
@@ -14,7 +13,7 @@ model = whisper.load_model("base")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # Vite dev server
+    allow_origins=["http://localhost:8081"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -41,16 +40,18 @@ async def ui_agent(request: Request):
     print(user_input)
     prompt = f"""
 You are a frontend UI assistant. The user will describe UI changes.
-You must respond in valid JSON format only, with two keys:
-- "htmlContent": HTML to append inside #results.
-- "codeSnippet": JavaScript to modify or style elements inside #results.
+You must respond ONLY in valid JSON with the following three keys:
+
+1. "appliedHTML" — this is the actual HTML fragment to insert into the existing #results-content container.
+2. "codeSnippet" — this is JavaScript code to manipulate styles or DOM behavior using the passed-in container.
+3. "fullHTML" — a fully standalone HTML block (with inline styles/scripts) for displaying complete source code to the user.
 
 User request: "{user_input}"
 """
 
     try:
         response = requests.post(
-            "http://localhost:11434/api/generate",  # Ollama default endpoint
+            "http://localhost:11434/api/generate",
             json={
                 "model": "llama3",
                 "prompt": prompt,
@@ -59,24 +60,22 @@ User request: "{user_input}"
         )
         result = response.json()
         output = result.get("response", "")
-        print(output,"output")
+        print("Model Output:", output)
 
-       # Attempt to parse JSON from model output
         parsed = json.loads(output.strip())
+
         return {
-            "htmlContent": parsed.get("htmlContent", ""),
-            "codeSnippet": parsed.get("codeSnippet", "")
+            "appliedHTML": parsed.get("appliedHTML", ""),
+            "codeSnippet": parsed.get("codeSnippet", ""),
+            "fullHTML": parsed.get("fullHTML", "")
         }
 
     except Exception as e:
         return {
-            "htmlContent": "<p>Error processing request.</p>",
-            "codeSnippet": f"console.error('Error: {str(e)}');"
+            "appliedHTML": "<p>Error applying changes.</p>",
+            "codeSnippet": f"console.error('Error: {str(e)}');",
+            "fullHTML": "<html><body><p>Error generating full HTML.</p></body></html>"
         }
-
-   
-  
-
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

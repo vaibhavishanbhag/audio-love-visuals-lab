@@ -3,7 +3,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Mic, MicOff } from 'lucide-react';
 
 interface CircularWaveVisualizerProps {
-  onResultsUpdate: (data: { htmlContent: string; codeSnippet: string }) => void;
+  onResultsUpdate: (data: {
+    appliedHtml: string;
+    codeSnippet: string;
+    fullHtml: string;
+  }
+  ) => void;
 }
 
 const CircularWaveVisualizer = ({ onResultsUpdate }: CircularWaveVisualizerProps) => {
@@ -58,10 +63,7 @@ const CircularWaveVisualizer = ({ onResultsUpdate }: CircularWaveVisualizerProps
           });
 
           const agentData = await agentRes.json();
-          onResultsUpdate({
-            htmlContent: agentData.htmlContent,
-            codeSnippet: agentData.code,
-          });
+          onResultsUpdate(agentData);
         } catch (err) {
           console.error('API error:', err);
         }

@@ -5,7 +5,7 @@ import AudioVisualizer from '../components/AudioVisualizer';
 import ResultsDisplay from '../components/ResultsDisplay';
 
 const Index = () => {
-  const [results, setResults] = useState<{ htmlContent: string; codeSnippet: string } | null>(null);
+  const [results, setResults] = useState<{ appliedHtml: string; codeSnippet: string; fullHtml: string } | null>(null);
 
 
 
