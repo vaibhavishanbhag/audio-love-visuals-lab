@@ -1,4 +1,7 @@
+
 import React, { useEffect, useRef, useState } from 'react';
+import { Switch } from './ui/switch';
+import { Code } from 'lucide-react';
 
 interface ResultsDisplayProps {
   results: {
@@ -24,18 +27,27 @@ const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
     }
   }, [results]);
 
+  const hasCode = results?.fullHtml || results?.codeSnippet;
+
   return (
     <div className="results-container">
-      <h2 className="text-xl font-medium mb-4 gradient-text">Results</h2>
-
-      {/* Toggle Button */}
-      <div className="mb-4">
-        <button
-          onClick={() => setShowFullHtml(!showFullHtml)}
-          className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        >
-          {showFullHtml ? 'Hide Full Code' : 'Show Full Code'}
-        </button>
+      {/* Header with inline toggle */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-medium gradient-text">Results</h2>
+        
+        {hasCode && (
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Code size={16} />
+              <span>Show Code</span>
+            </div>
+            <Switch
+              checked={showFullHtml}
+              onCheckedChange={setShowFullHtml}
+              className="data-[state=checked]:bg-purple-600"
+            />
+          </div>
+        )}
       </div>
 
       {/* Applied HTML + Code Execution */}
@@ -55,7 +67,7 @@ const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
       )}
 
       {/* Full HTML Display */}
-      {showFullHtml && (
+      {showFullHtml && hasCode && (
         <div className="border-t pt-4 mt-6">
           <h3 className="text-lg font-semibold mb-2">🧾 Full Generated HTML:</h3>
           <pre className="bg-gray-100 p-4 rounded-md text-sm text-gray-800 overflow-auto whitespace-pre-wrap">
