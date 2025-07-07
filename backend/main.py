@@ -7,6 +7,7 @@ import tempfile
 import whisper
 import requests
 import uvicorn
+import json
 
 app = FastAPI()
 model = whisper.load_model("base")
@@ -37,31 +38,44 @@ async def process_audio(file: UploadFile = File(...)):
 async def ui_agent(request: Request):
     body = await request.json()
     user_input = body.get("text")
+    print(user_input)
+    prompt = f"""
+You are a frontend UI assistant. The user will describe UI changes.
+You must respond in valid JSON format only, with two keys:
+- "htmlContent": HTML to append inside #results.
+- "codeSnippet": JavaScript to modify or style elements inside #results.
 
-    system_prompt = (
-        "You are a UI assistant. Based on the user's request, respond ONLY with pure JavaScript code "
-        "that can be executed in the browser to change the DOM. Do not explain anything, just output code."
-    )
+User request: "{user_input}"
+"""
 
-    payload = {
-        "model": "llama3",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_input}
-        ],
-        "stream": False
-    }
+    try:
+        response = requests.post(
+            "http://localhost:11434/api/generate",  # Ollama default endpoint
+            json={
+                "model": "llama3",
+                "prompt": prompt,
+                "stream": False
+            }
+        )
+        result = response.json()
+        output = result.get("response", "")
+        print(output,"output")
 
-    response = requests.post("http://localhost:11434/api/chat", json=payload)
-    data = response.json()
+       # Attempt to parse JSON from model output
+        parsed = json.loads(output.strip())
+        return {
+            "htmlContent": parsed.get("htmlContent", ""),
+            "codeSnippet": parsed.get("codeSnippet", "")
+        }
 
-    code = data.get("message", {}).get("content", "")
+    except Exception as e:
+        return {
+            "htmlContent": "<p>Error processing request.</p>",
+            "codeSnippet": f"console.error('Error: {str(e)}');"
+        }
 
-    # Return only the code snippet – HTML changes are still handled in frontend
-    return JSONResponse(content={
-        "codeSnippet": code,
-        "htmlContent": ""  # frontend will compute this
-    })
+   
+  
 
 
 if __name__ == "__main__":

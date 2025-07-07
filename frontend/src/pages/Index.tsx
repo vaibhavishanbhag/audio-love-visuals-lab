@@ -5,26 +5,10 @@ import AudioVisualizer from '../components/AudioVisualizer';
 import ResultsDisplay from '../components/ResultsDisplay';
 
 const Index = () => {
-  const [results, setResults] = useState<string | null>(null);
-
-  // This function will be available globally for external scripts to call
-  // to update the results
-  useEffect(() => {
-    // Expose a global function to update results
-    window.updateAudioResults = (htmlContent: string, codeSnippet: string) => {
-      const combined = JSON.stringify({ htmlContent, codeSnippet });
-      console.log(combined);
-      setResults(combined);
-    };
-    
+  const [results, setResults] = useState<{ htmlContent: string; codeSnippet: string } | null>(null);
 
 
 
-    // Clean up
-    return () => {
-      delete window.updateAudioResults;
-    };
-  }, []);
 
   return (
     <div className="min-h-screen gradient-bg">
@@ -41,7 +25,8 @@ const Index = () => {
           </p>
         </div>
 
-        <AudioVisualizer />
+        <AudioVisualizer onResultsUpdate={setResults} />
+
 
         <div className="mt-16">
           <ResultsDisplay results={results} />

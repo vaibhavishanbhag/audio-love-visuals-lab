@@ -1,47 +1,35 @@
 import React, { useEffect, useRef } from 'react';
 
 interface ResultsDisplayProps {
-  results: string | null;
+  results: { htmlContent: string; codeSnippet: string } | null;
 }
 
 const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  let htmlContent = '';
-  let codeSnippet = '';
-
-  if (results) {
-    try {
-      const parsed = JSON.parse(results);
-      htmlContent = parsed.htmlContent;
-      codeSnippet = parsed.codeSnippet;
-    } catch {
-      htmlContent = results;
-    }
-  }
 
   // Run LLM-generated code scoped to this container
   useEffect(() => {
-    if (containerRef.current && codeSnippet) {
+    if (results?.codeSnippet && containerRef.current) {
       try {
-        const fn = new Function('container', codeSnippet);
+        const fn = new Function('container', results.codeSnippet);
         fn(containerRef.current);
       } catch (err) {
-        console.error('Error executing AI-generated code:', err);
+        console.error('Execution error:', err);
       }
     }
-  }, [codeSnippet]);
+  }, [results]);
 
   return (
     <div className="results-container">
       <h2 className="text-xl font-medium mb-4 gradient-text">Results</h2>
 
       {/* Show Code */}
-      {codeSnippet && (
+      {results?.codeSnippet && (
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-2">🧠 Code Generated:</h3>
           <pre className="bg-gray-100 p-4 rounded-md text-sm text-blue-800 overflow-auto">
-            <code>{codeSnippet}</code>
+            <code>{results?.codeSnippet}</code>
           </pre>
         </div>
       )}
@@ -53,12 +41,10 @@ const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
         className="text-gray-700 border-t pt-4 min-h-[150px]"
       >
         <h3 className="text-lg font-semibold mb-2">✨ Applied Changes:</h3>
-        {htmlContent ? (
-          <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+        {results?.htmlContent  ? (
+          <div dangerouslySetInnerHTML={{ __html: results.htmlContent }} />
         ) : (
-          <p className="text-gray-400 italic">
-            Record your request to see changes here.
-          </p>
+          <p className="text-gray-400 italic">Waiting for response...</p>
         )}
       </div>
     </div>

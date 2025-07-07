@@ -1,11 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Mic, MicOff } from 'lucide-react';
 
-const AudioVisualizer = () => {
+
+interface AudioVisualizerProps {
+  onResultsUpdate: (data: { htmlContent: string; codeSnippet: string }) => void;
+}
+
+const AudioVisualizer = ({ onResultsUpdate }: AudioVisualizerProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioData, setAudioData] = useState<number[]>(Array(50).fill(5));
-  const [transcript, setTranscript] = useState('');
-  const htmlBodyRef = useRef(null);
+  const htmlBodyRef = useRef<HTMLDivElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const animationRef = useRef<number | null>(null);
@@ -14,18 +18,13 @@ const AudioVisualizer = () => {
   const dataArrayRef = useRef<Uint8Array | null>(null);
 
   const toggleRecording = async () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      await startRecording();
-    }
+    isRecording ? stopRecording() : await startRecording();
   };
 
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      // Visualizer setup
       audioContextRef.current = new AudioContext();
       analyserRef.current = audioContextRef.current.createAnalyser();
       const source = audioContextRef.current.createMediaStreamSource(stream);
@@ -34,29 +33,25 @@ const AudioVisualizer = () => {
       const bufferLength = analyserRef.current.frequencyBinCount;
       dataArrayRef.current = new Uint8Array(bufferLength);
 
-      // MediaRecorder setup
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
 
       mediaRecorderRef.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
+        if (event.data.size > 0) audioChunksRef.current.push(event.data);
       };
 
       mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/mp3' });
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const formData = new FormData();
-        formData.append('file', audioBlob, 'recording.mp3');
-      
+        formData.append('file', audioBlob, 'recording.webm');
+
         try {
           const res = await fetch('http://localhost:8000/process-audio/', {
             method: 'POST',
             body: formData,
           });
           const data = await res.json();
-          setTranscript(data.transcription);
-          console.log(data.transcription)
+
           const agentRes = await fetch('http://localhost:8000/ui-agent/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -64,31 +59,23 @@ const AudioVisualizer = () => {
           });
 
           const agentData = await agentRes.json();
-          try {
-            const fn = new Function('container', agentData.code);
-            fn(htmlBodyRef.current);
-          
-            if (window.updateAudioResults && htmlBodyRef.current) {
-              window.updateAudioResults(
-                htmlBodyRef.current.innerHTML, // htmlContent
-                agentData.code                 // codeSnippet
-              );
-            }
-          } catch (err) {
-            console.error('JS Code Error:', err);
-          }
-        } catch (error) {
-          console.error('API Error:', error);
+
+          onResultsUpdate({
+            htmlContent: agentData.htmlContent,
+            codeSnippet: agentData.code,
+          });
+        } catch (err) {
+          console.error('API error:', err);
         }
 
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorderRef.current.start();
       updateVisualizer();
       setIsRecording(true);
-    } catch (error) {
-      console.error('Microphone access error:', error);
+    } catch (err) {
+      console.error('Mic access error:', err);
     }
   };
 
@@ -105,7 +92,6 @@ const AudioVisualizer = () => {
     if (!analyserRef.current || !dataArrayRef.current) return;
 
     analyserRef.current.getByteFrequencyData(dataArrayRef.current);
-
     const newData: number[] = [];
     const step = Math.floor(dataArrayRef.current.length / 50);
 
@@ -146,7 +132,7 @@ const AudioVisualizer = () => {
           ))}
         </div>
       </div>
-      
+
       <div className="flex justify-center mt-6">
         <button 
           onClick={toggleRecording}
@@ -156,6 +142,8 @@ const AudioVisualizer = () => {
           {isRecording ? <MicOff size={24} /> : <Mic size={24} />}
         </button>
       </div>
+
+      <div ref={htmlBodyRef} id="dynamic-ui" className="mt-6" />
     </div>
   );
 };
